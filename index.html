@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Klaus | Asistente académico con IA</title>
+  <style>
+    :root {
+      --navy: #020b3f;
+      --blue: #165dff;
+      --blue-2: #0b33c8;
+      --ink: #0d1324;
+      --muted: #667085;
+      --soft: #f5f8ff;
+      --line: #e6eaf3;
+      --white: #ffffff;
+      --shadow: 0 24px 70px rgba(7, 18, 56, 0.13);
+      --radius: 28px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(22, 93, 255, 0.10), transparent 34rem),
+        linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
+      line-height: 1.55;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      overflow: hidden;
+    }
+
+    .container {
+      width: min(1160px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(18px);
+      background: rgba(255, 255, 255, 0.78);
+      border-bottom: 1px solid rgba(230, 234, 243, 0.7);
+    }
+
+    .nav {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--navy);
+      font-size: 1.6rem;
+    }
+
+    .brand-logo {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      display: block;
+      border-radius: 14px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      color: #475467;
+      font-size: 0.96rem;
+      font-weight: 600;
+    }
+
+    .nav-cta {
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: var(--navy);
+      color: white;
+      box-shadow: 0 12px 26px rgba(2, 11, 63, 0.18);
+    }
+
+    .hero {
+      padding: 86px 0 70px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.02fr 0.98fr;
+      gap: 54px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 13px;
+      border: 1px solid rgba(22, 93, 255, 0.16);
+      background: rgba(22, 93, 255, 0.07);
+      color: var(--blue-2);
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 750;
+      margin-bottom: 22px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--blue);
+      box-shadow: 0 0 0 7px rgba(22, 93, 255, 0.12);
+    }
+
+    h1 {
+      font-size: clamp(2.6rem, 6vw, 5.4rem);
+      line-height: 0.95;
+      letter-spacing: -0.075em;
+      color: var(--navy);
+      margin-bottom: 26px;
+    }
+
+    .hero p {
+      font-size: 1.18rem;
+      color: #475467;
+      max-width: 640px;
+      margin-bottom: 34px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 999px;
+      padding: 15px 22px;
+      font-weight: 800;
+      border: 1px solid transparent;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--navy));
+      color: white;
+      box-shadow: 0 18px 38px rgba(22, 93, 255, 0.25);
+    }
+
+    .btn-secondary {
+      background: white;
+      border-color: var(--line);
+      color: var(--navy);
+    }
+
+    .hero-card {
+      position: relative;
+      min-height: 560px;
+      border-radius: 36px;
+      padding: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.72)),
+        radial-gradient(circle at top, rgba(22, 93, 255, 0.18), transparent 24rem);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(230, 234, 243, 0.9);
+    }
+
+    .app-window {
+      border-radius: 26px;
+      overflow: hidden;
+      background: #0b111b;
+      box-shadow: 0 28px 70px rgba(2, 11, 63, 0.24);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .window-bar {
+      height: 42px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: #111827;
+    }
+
+    .circle {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    .assistant-panel {
+      padding: 24px;
+      color: white;
+    }
+
+    .mini-label {
+      color: #98a2b3;
+      font-size: 0.83rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .material-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 211, 77, 0.4);
+      background: rgba(255, 211, 77, 0.08);
+      color: #f8d979;
+      font-weight: 750;
+      margin-bottom: 22px;
+    }
+
+    .prompt-box {
+      padding: 18px;
+      border-radius: 18px;
+      background: #151c27;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #d0d5dd;
+      margin-bottom: 18px;
+      min-height: 80px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .action-pill {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 12px 8px;
+      color: #f2f4f7;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .floating-card {
+      position: absolute;
+      right: 0;
+      bottom: 48px;
+      width: min(380px, 88%);
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 24px 60px rgba(2, 11, 63, 0.22);
+      padding: 22px;
+    }
+
+    .floating-card h3 {
+      font-size: 1rem;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .floating-card p {
+      color: #475467;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
+
+    .progress {
+      height: 9px;
+      background: #eef2ff;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress span {
+      display: block;
+      width: 74%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--blue), var(--navy));
+    }
+
+    section {
+      padding: 86px 0;
+    }
+
+    .section-head {
+      max-width: 760px;
+      margin-bottom: 42px;
+    }
+
+    .section-head.center {
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1;
+      letter-spacing: -0.055em;
+      color: var(--navy);
+      margin-bottom: 18px;
+    }
+
+    .section-head p {
+      color: #566176;
+      font-size: 1.08rem;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .step-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 26px;
+      box-shadow: 0 16px 34px rgba(7, 18, 56, 0.06);
+      min-height: 250px;
+    }
+
+    .step-num {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--blue), var(--navy));
+      color: white;
+      font-weight: 900;
+      margin-bottom: 24px;
+    }
+
+    .step-card h3 {
+      font-size: 1.12rem;
+      color: var(--navy);
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .step-card p {
+      color: #667085;
+      font-size: 0.96rem;
+    }
+
+    .showcase {
+      background: #071123;
+      color: white;
+      position: relative;
+    }
+
+    .showcase::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(22, 93, 255, 0.24), transparent 28rem),
+        radial-gradient(circle at 85% 0%, rgba(255, 255, 255, 0.10), transparent 20rem);
+      pointer-events: none;
+    }
+
+    .showcase .container {
+      position: relative;
+      z-index: 1;
+    }
+
+    .showcase h2 {
+      color: white;
+    }
+
+    .showcase .section-head p {
+      color: #b6c0cf;
+    }
+
+    .screens-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .screen-card {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.25);
+    }
+
+    .screen-placeholder {
+      min-height: 330px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.11), rgba(255,255,255,0.04)),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.03), rgba(255,255,255,0.03) 1px, transparent 1px, transparent 16px);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      text-align: center;
+      color: #d0d5dd;
+    }
+
+    .screen-placeholder img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .screen-caption {
+      padding: 24px;
+    }
+
+    .screen-caption h3 {
+      font-size: 1.15rem;
+      margin-bottom: 8px;
+    }
+
+    .screen-caption p {
+      color: #b6c0cf;
+      font-size: 0.96rem;
+    }
+
+    .side-stack {
+      display: grid;
+      gap: 22px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .feature-card {
+      border-radius: 30px;
+      background: white;
+      border: 1px solid var(--line);
+      padding: 28px;
+      box-shadow: 0 16px 34px rgba(7, 18, 56, 0.06);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: rgba(22, 93, 255, 0.09);
+      color: var(--blue-2);
+      font-weight: 900;
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
+
+    .feature-card h3 {
+      color: var(--navy);
+      font-size: 1.15rem;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+
+    .feature-card p {
+      color: #667085;
+      font-size: 0.96rem;
+    }
+
+    .pilot {
+      padding: 52px;
+      border-radius: 38px;
+      background:
+        linear-gradient(135deg, rgba(22, 93, 255, 0.10), rgba(2, 11, 63, 0.06)),
+        white;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1fr 0.72fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    .pilot h2 {
+      margin-bottom: 18px;
+    }
+
+    .pilot p {
+      color: #566176;
+      font-size: 1.08rem;
+      max-width: 690px;
+    }
+
+    .pilot-stats {
+      display: grid;
+      gap: 14px;
+    }
+
+    .stat {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 20px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--navy);
+      font-size: 1.55rem;
+      letter-spacing: -0.04em;
+      margin-bottom: 4px;
+    }
+
+    .stat span {
+      color: #667085;
+      font-size: 0.92rem;
+      font-weight: 650;
+    }
+
+    footer {
+      padding: 54px 0;
+      border-top: 1px solid var(--line);
+      color: #667085;
+    }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .footer-brand {
+      color: var(--navy);
+      font-weight: 900;
+      font-size: 1.25rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .pilot,
+      .screens-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .steps,
+      .features {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hero-card {
+        min-height: 520px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 56px;
+      }
+
+      .steps,
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .floating-card {
+        position: static;
+        width: 100%;
+        margin-top: 18px;
+      }
+
+      .hero-card {
+        min-height: auto;
+      }
+
+      .pilot {
+        padding: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="container nav">
+        <a class="brand" href="#inicio" aria-label="Klaus">
+          <img class="brand-logo" src="assets/logo-klaus.png" alt="Logo de Klaus" />
+          <span>Klaus</span>
+        </a>
+        <nav class="nav-links" aria-label="Navegación principal">
+          <a href="#funciona">Funcionamiento</a>
+          <a href="#demo">Demo</a>
+          <a href="#piloto">Piloto</a>
+          <a class="nav-cta" href="#contacto">Solicitar acceso</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="inicio">
+        <div class="container hero-grid">
+          <div>
+            <div class="eyebrow"><span class="dot"></span> Asistente académico con IA para universitarios</div>
+            <h1>Estudia con una IA que entiende tu material.</h1>
+            <p>
+              Klaus convierte apuntes, PDFs y material de clase en explicaciones, resúmenes, tarjetas de repaso,
+              planes de estudio y preguntas tipo test. No se limita a responder: ayuda a organizar el aprendizaje.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#demo">Ver cómo funciona</a>
+              <a class="btn btn-secondary" href="#piloto">Fase piloto</a>
+            </div>
+          </div>
+
+          <div class="hero-card" aria-label="Vista conceptual de Klaus funcionando">
+            <div class="app-window">
+              <div class="window-bar">
+                <span class="circle"></span>
+                <span class="circle"></span>
+                <span class="circle"></span>
+              </div>
+              <div class="assistant-panel">
+                <div class="mini-label">Material actual</div>
+                <div class="material-box">
+                  <span>📚 Diagnóstico y tratamiento.pdf</span>
+                  <span>20 pendientes</span>
+                </div>
+                <div class="mini-label">Pregunta, resume o crea un plan del material abierto</div>
+                <div class="prompt-box">Resume el material abierto para estudiar.</div>
+                <div class="actions">
+                  <div class="action-pill">Plan</div>
+                  <div class="action-pill">Quiz</div>
+                  <div class="action-pill">Tarjeta</div>
+                  <div class="action-pill">Resumen</div>
+                </div>
+              </div>
+            </div>
+            <div class="floating-card">
+              <h3>Repaso activo</h3>
+              <p>El sistema puede generar tarjetas y micro-preguntas para reforzar lo que queda pendiente.</p>
+              <div class="progress"><span></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="funciona">
+        <div class="container">
+          <div class="section-head center">
+            <h2>Del material al estudio activo.</h2>
+            <p>
+              Klaus está diseñado para acompañar el flujo real de estudio universitario: abrir material, entenderlo,
+              practicarlo y detectar qué conviene repasar después.
+            </p>
+          </div>
+
+          <div class="steps">
+            <article class="step-card">
+              <div class="step-num">1</div>
+              <h3>Detecta el material abierto</h3>
+              <p>Trabaja sobre PDFs, apuntes o contenido académico visible para mantener el estudio centrado en la fuente.</p>
+            </article>
+            <article class="step-card">
+              <div class="step-num">2</div>
+              <h3>Elige una acción</h3>
+              <p>Permite pedir un resumen, un quiz, una tarjeta de repaso o un plan de estudio sin cambiar de contexto.</p>
+            </article>
+            <article class="step-card">
+              <div class="step-num">3</div>
+              <h3>Genera contenido útil</h3>
+              <p>Transforma el material en explicaciones claras, preguntas tipo examen y estructuras de repaso.</p>
+            </article>
+            <article class="step-card">
+              <div class="step-num">4</div>
+              <h3>Guía el ritmo de estudio</h3>
+              <p>Puede sugerir pausas, repaso pendiente o continuar con la acción original según la carga de la sesión.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="showcase" id="demo">
+        <div class="container">
+          <div class="section-head">
+            <h2>Klaus en uso real.</h2>
+            <p>
+              La interfaz está pensada para mantenerse encima del material académico y actuar como una capa de ayuda
+              rápida, sin obligar al estudiante a reconstruir el contexto desde cero.
+            </p>
+          </div>
+
+          <div class="screens-grid">
+            <article class="screen-card">
+              <div class="screen-placeholder">
+                <img src="assets/klaus-panel-principal.jpg" alt="Panel principal de Klaus sobre un PDF académico" />
+              </div>
+              <div class="screen-caption">
+                <h3>Acciones académicas directas</h3>
+                <p>El estudiante puede pedir un resumen, generar un quiz, crear tarjetas o planificar el estudio desde el material abierto.</p>
+              </div>
+            </article>
+
+            <div class="side-stack">
+              <article class="screen-card">
+                <div class="screen-placeholder">
+                  <img src="assets/klaus-tarjeta-repaso.jpg" alt="Tarjeta de repaso generada por Klaus" />
+                </div>
+                <div class="screen-caption">
+                  <h3>Tarjetas y repaso</h3>
+                  <p>Convierte conceptos del temario en preguntas para consolidar memoria y comprensión.</p>
+                </div>
+              </article>
+
+              <article class="screen-card">
+                <div class="screen-placeholder">
+                  <img src="assets/klaus-decision-tutor.jpg" alt="Recomendación del tutor de Klaus durante la sesión" />
+                </div>
+                <div class="screen-caption">
+                  <h3>Acompañamiento durante la sesión</h3>
+                  <p>El sistema puede sugerir cuándo continuar, pausar o reforzar una parte del estudio.</p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="container">
+          <div class="section-head center">
+            <h2>Diseñado para estudiar, no solo para preguntar.</h2>
+            <p>
+              Klaus se centra en tareas académicas concretas que un estudiante universitario repite a diario.
+            </p>
+          </div>
+
+          <div class="features">
+            <article class="feature-card">
+              <div class="feature-icon">R</div>
+              <h3>Resúmenes estudiables</h3>
+              <p>Genera explicaciones y síntesis enfocadas en entender el temario y preparar el examen.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon">Q</div>
+              <h3>Preguntas tipo test</h3>
+              <p>Crea práctica activa a partir del contenido, útil para detectar lagunas antes del examen.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon">T</div>
+              <h3>Tarjetas de repaso</h3>
+              <p>Convierte ideas clave en tarjetas para reforzar memoria, comprensión y recuperación activa.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="piloto">
+        <div class="container">
+          <div class="pilot">
+            <div>
+              <div class="eyebrow"><span class="dot"></span> Fase piloto</div>
+              <h2>Probado con estudiantes universitarios.</h2>
+              <p>
+                Klaus se encuentra actualmente en fase piloto, siendo probado con un número reducido de estudiantes
+                universitarios para validar su utilidad real en contextos de estudio y preparación de exámenes.
+              </p>
+            </div>
+            <div class="pilot-stats" aria-label="Estado del piloto">
+              <div class="stat">
+                <strong>Piloto</strong>
+                <span>Validación con usuarios reales</span>
+              </div>
+              <div class="stat">
+                <strong>Universidad</strong>
+                <span>Enfoque en estudio académico exigente</span>
+              </div>
+              <div class="stat">
+                <strong>IA + método</strong>
+                <span>Respuestas, práctica y repaso guiado</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer id="contacto">
+      <div class="container footer-row">
+        <div>
+          <div class="footer-brand">Klaus</div>
+          <p>Asistente académico con IA para estudiar de forma más personalizada.</p>
+        </div>
+        <a class="btn btn-primary" href="mailto:contacto@klaus.ai">Contactar</a>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
